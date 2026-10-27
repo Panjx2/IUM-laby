@@ -59,7 +59,7 @@ if __name__ == "__main__":
     X_train, X_test, y_train, y_test = split_data(df)
 
     print(f"Dane: {os.path.relpath(DATA_PATH, BASE_DIR)}, rozmiar: {df.shape}")
-    print(f"Parametry z .env: TEST_SIZE={TEST_SIZE}, RANDOM_SEED={RANDOM_SEED}")
+    print(f"Parametry: TEST_SIZE={TEST_SIZE}, RANDOM_SEED={RANDOM_SEED}")
     print(f"Zbior treningowy: {X_train.shape}, testowy: {X_test.shape}")
     print("Klasy w zbiorze treningowym:", y_train.value_counts().sort_index().to_dict())
     print("Klasy w zbiorze testowym:   ", y_test.value_counts().sort_index().to_dict())
