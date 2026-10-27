@@ -1,0 +1,16 @@
+Walidacja krzyzowa (KFold, 5 foldow, accuracy)
+Fold                 1       2       3       4       5
+scikit-learn    1.0000  0.9722  1.0000  0.9714  1.0000
+PyTorch         1.0000  0.9722  0.9722  0.9429  1.0000
+
+Zestawienie
+Model          Acc srednia  Odch. std  Trening [s]   CV [s]  Linie kodu
+scikit-learn        0.9887     0.0138       0.0079   0.2071           7
+PyTorch             0.9775     0.0213       0.4229   5.0878          46
+
+Wniosek:
+- wyzsza srednia accuracy: scikit-learn (0.9887 vs 0.9775),
+  roznica miesci sie w odchyleniu std, wiec modele sa porownywalne,
+- trening scikit-learn byl ~53x szybszy, a kod 6.6x krotszy (7 vs 46 linii),
+- dla malego zbioru tabelarycznego lepszym wyborem jest scikit-learn;
+  PyTorch oplaca sie przy duzych danych nieustrukturyzowanych (obrazy, tekst).
