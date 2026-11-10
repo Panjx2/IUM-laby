@@ -1,0 +1,34 @@
+services:
+  # Zadania 2-3 - usluga treningowa, budowana z Dockerfile z zadania 1
+  train:
+    build: .
+    # nazwa zbudowanego obrazu - ta sama co przy docker build w zadaniu 1
+    image: pipeline-ml:1.0
+    # konfiguracja pipeline'u (sciezki, podzial danych, hiperparametry) zamiast .env
+    env_file: .env.train
+    # caly pipeline (data_prep -> train -> evaluate) zamiast samego train.py z CMD;
+    # w trakcie pracy udostepnia swoj stan pod http://train:5000/status (zadanie 6)
+    command: python src/pipeline.py
+    volumes:
+      # dane, model i metryki zostaja na hoscie po zakonczeniu kontenera
+      - ./data:/app/data
+      - ./models:/app/models
+    # Zadanie 4 - limity zasobow: najwyzej 256 MB pamieci i pol rdzenia procesora
+    mem_limit: 256m
+    cpus: 0.5
+
+  # Zadanie 4 - druga usluga: serwer HTTP z katalogiem wynikow (model i metryki)
+  wyniki:
+    build: ./wyniki
+    environment:
+      # Zadanie 6 - nazwa uslugi z tego pliku dziala w sieci compose jak nazwa hosta
+      - TRAIN_URL=http://train:5000/status
+    # port wystawiony na hosta - tylko z ta usluga laczy sie przegladarka
+    ports:
+      - "8080:8080"
+    volumes:
+      # ten sam katalog, do ktorego zapisuje train, tutaj tylko do odczytu
+      - ./models:/wyniki:ro
+    # start po kontenerze train (po jego uruchomieniu, nie po zakonczeniu treningu)
+    depends_on:
+      - train

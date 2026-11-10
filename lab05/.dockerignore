@@ -1,0 +1,21 @@
+# Zadanie 5 - do obrazu trafia tylko kod pipeline'u, requirements.txt i .env.example
+# lokalne srodowisko wirtualne - obraz instaluje wlasne biblioteki z requirements.txt
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.git/
+.gitignore
+# dane treningowe i zapisane modele - trafiaja do kontenera przez wolumeny
+data/
+models/
+# pliki .env z wartosciami - podaje je env_file w docker-compose.yml
+.env*
+!.env.example
+# testy, druga usluga i pliki samego Dockera
+tests/
+pytest.ini
+wyniki/
+Dockerfile
+.dockerignore
+docker-compose.yml
