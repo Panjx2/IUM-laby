@@ -1,0 +1,14 @@
+# Zadanie 5 - pliki niepotrzebne w obrazie aplikacji
+.venv/
+__pycache__/
+*.pyc
+.git/
+.gitignore
+.env
+# wynik dzialania kontenera (wolumen) i drugi obraz
+dane/
+serwer/
+# pliki samego Dockera
+Dockerfile
+.dockerignore
+docker-compose.yml

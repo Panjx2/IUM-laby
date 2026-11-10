@@ -1,0 +1,12 @@
+# Zadanie 5 - usluga na podstawie obrazu z zadania 1
+services:
+  app:
+    build: .
+    environment:
+      - GREETING=Witaj z docker compose
+      # z ustawionym PORT aplikacja po zapisaniu wyniku serwuje /data po HTTP
+      - PORT=8000
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./dane:/data
