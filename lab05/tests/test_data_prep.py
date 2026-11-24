@@ -37,7 +37,8 @@ def test_split_removes_target_from_features(df):
 def test_split_keeps_class_proportions(df):
     _, _, y_train, y_test = split_data(df, 0.2, seed=42)
     assert y_train.value_counts().to_dict() == {"a": 40, "b": 40}
-    assert y_test.value_counts().to_dict() == {"a": 10, "b": 10}
+    # Lab. 6, zadanie 4 - celowo bledna oczekiwana wartosc: CI ma sie zatrzymac na testach
+    assert y_test.value_counts().to_dict() == {"a": 15, "b": 5}
 
 
 def test_split_is_reproducible(df):
