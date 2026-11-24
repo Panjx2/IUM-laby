@@ -1,0 +1,81 @@
+# Lab. 6 - ciagla integracja (CI) dla pipeline'u ML z lab. 5, czyli katalogu lab05/
+name: CI
+
+# Zadanie 1 - wyzwalacze: push do galezi main i kazdy pull request
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# workflow tylko czyta repozytorium - jego token nie dostaje prawa zapisu
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Testy i trening
+    runs-on: ubuntu-latest
+    # Zadanie 1 - job dziala w kontenerze z obrazu, na ktorym zbudowane sa obrazy
+    # z lab. 4/5 (FROM python:3.11-slim): ten sam system i ten sam Python 3.11
+    container:
+      image: python:3.11-slim
+    defaults:
+      run:
+        # projekt z lab. 5 lezy w podkatalogu repozytorium
+        working-directory: lab05
+    # Zadanie 3 - zwykla konfiguracja pipeline'u, te same wartosci co w .env.train
+    # z lab. 5; nie sa tajne, wiec zostaja jawnie w pliku workflow
+    env:
+      DATA_PATH: data/wine.csv
+      TEST_SIZE: "0.2"
+      RANDOM_SEED: "42"
+      MODEL_PATH: models/model.joblib
+      MODEL_C: "1.0"
+      MODEL_MAX_ITER: "1000"
+      RESULTS_PATH: models/wyniki.txt
+    steps:
+      - name: Pobranie kodu
+        uses: actions/checkout@v7
+
+      # Zadanie 2 - katalog .venv z bibliotekami wraca z cache, dopoki nie zmieni sie
+      # requirements.txt (klucz zawiera hash tego pliku)
+      - name: Cache zaleznosci
+        id: cache
+        uses: actions/cache@v6
+        with:
+          path: lab05/.venv
+          key: venv-python3.11-${{ hashFiles('lab05/requirements.txt') }}
+
+      # instalacja tylko wtedy, gdy w cache nie bylo .venv dla tego requirements.txt
+      - name: Instalacja zaleznosci
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          python -m venv .venv
+          .venv/bin/pip install -r requirements.txt
+
+      # Zadanie 4 - fail fast: szybkie testy przed treningiem; gdy test nie przejdzie,
+      # job konczy sie na tym kroku i kolejne juz sie nie wykonuja
+      - name: Testy
+        run: .venv/bin/pytest -v
+
+      - name: Trening modelu
+        env:
+          # Zadanie 3 - sekret z ustawien repozytorium, widoczny tylko w tym kroku
+          API_KEY: ${{ secrets.API_KEY }}
+        run: |
+          # klucz jest fikcyjny (projekt nie laczy sie z zadna usluga): krok sprawdza,
+          # ze sekret dotarl do joba, a GitHub zastepuje jego wartosc w logu przez ***
+          test -n "$API_KEY" || { echo "Brak sekretu API_KEY"; exit 1; }
+          echo "API_KEY w logu: $API_KEY"
+          .venv/bin/python src/pipeline.py
+
+      # Zadanie 2 - wytrenowany model i metryki jako artefakt przebiegu,
+      # do pobrania z zakladki Actions
+      - name: Artefakt z modelem
+        uses: actions/upload-artifact@v7
+        with:
+          name: model
+          path: |
+            lab05/models/model.joblib
+            lab05/models/wyniki.txt
+          if-no-files-found: error
