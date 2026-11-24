@@ -12,6 +12,7 @@ Laboratoria z przedmiotu Inżynieria uczenia maszynowego.
 | `lab04/` | podstawy Dockera: Dockerfile, zmienne środowiskowe, wolumen, docker compose |
 | `lab05/` | konteneryzacja pipeline'u ML: obraz z zależnościami, Compose, limity zasobów |
 | `.github/workflows/ci.yml` | lab. 6: ciągła integracja w GitHub Actions dla projektu z `lab05/` |
+| `lab07/` | Jenkins w kontenerze Dockera: uruchomienie z wolumenem, pluginy, pierwszy job |
 
 ## CI
 
